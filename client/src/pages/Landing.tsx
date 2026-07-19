@@ -14,6 +14,7 @@ import ShimmerText from "../components/landing/ShimmerText";
 import TerminalDiffPanel from "../components/landing/TerminalDiffPanel";
 import PipelineStepCard from "../components/landing/PipelineStepCard";
 import PipelineRail from "../components/landing/PipelineRail";
+import TryDemoSection from "../components/landing/TryDemoSection";
 
 const steps = [
   {
@@ -145,47 +146,67 @@ export default function Landing() {
                 alignItems={{ xs: "center", md: "flex-start" }}
                 pt={1}
               >
-                <Box
-                  component={motion.div}
-                  animate={
-                    prefersReducedMotion
-                      ? undefined
-                      : {
-                          boxShadow: [
-                            `0 8px 24px ${tint(palette.primary.main, 0.28)}`,
-                            `0 8px 32px ${tint(palette.primary.main, 0.5)}`,
-                            `0 8px 24px ${tint(palette.primary.main, 0.28)}`,
-                          ],
-                        }
-                  }
-                  transition={prefersReducedMotion ? undefined : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-                  whileHover={{ y: -2 }}
-                  sx={{ borderRadius: 2, display: "inline-block" }}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={1.5}
+                  alignItems="center"
                 >
-                  <Button
-                    size="large"
-                    variant="contained"
-                    startIcon={<GitHubIcon />}
-                    onClick={loginWithGitHub}
-                    sx={{
-                      px: 4,
-                      py: 1.4,
-                      fontSize: 16,
-                    }}
+                  <Box
+                    component={motion.div}
+                    animate={
+                      prefersReducedMotion
+                        ? undefined
+                        : {
+                            boxShadow: [
+                              `0 8px 24px ${tint(palette.primary.main, 0.28)}`,
+                              `0 8px 32px ${tint(palette.primary.main, 0.5)}`,
+                              `0 8px 24px ${tint(palette.primary.main, 0.28)}`,
+                            ],
+                          }
+                    }
+                    transition={prefersReducedMotion ? undefined : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                    whileHover={{ y: -2 }}
+                    sx={{ borderRadius: 2, display: "inline-block" }}
                   >
-                    Continue with GitHub
-                  </Button>
-                </Box>
-                <Button
-                  size="medium"
-                  variant="outlined"
-                  color="inherit"
-                  startIcon={<ScienceIcon />}
-                  onClick={loginWithDemo}
-                  sx={{ px: 3, py: 1, fontSize: 14, borderColor: "divider" }}
-                >
-                  Try Demo
-                </Button>
+                    <Button
+                      size="large"
+                      variant="contained"
+                      startIcon={<GitHubIcon />}
+                      onClick={loginWithGitHub}
+                      sx={{
+                        px: 4,
+                        py: 1.4,
+                        fontSize: 16,
+                      }}
+                    >
+                      Continue with GitHub
+                    </Button>
+                  </Box>
+                  <Box component={motion.div} whileHover={{ y: -2 }} sx={{ borderRadius: 2, display: "inline-block" }}>
+                    <Button
+                      size="large"
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<ScienceIcon />}
+                      onClick={() => document.getElementById("try-demo")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                      sx={{
+                        px: 4,
+                        py: 1.4,
+                        fontSize: 16,
+                        borderWidth: 1.5,
+                        borderColor: tint(palette.primary.main, 0.45),
+                        bgcolor: tint(palette.primary.main, isDark ? 0.08 : 0.05),
+                        "&:hover": {
+                          borderWidth: 1.5,
+                          borderColor: "primary.main",
+                          bgcolor: tint(palette.primary.main, isDark ? 0.14 : 0.09),
+                        },
+                      }}
+                    >
+                      Try Demo
+                    </Button>
+                  </Box>
+                </Stack>
                 <Typography variant="caption" color="text.secondary">
                   We only read your scan results and never ship a change without your approval.
                 </Typography>
@@ -215,14 +236,20 @@ export default function Landing() {
           </Grid>
         </Grid>
 
-        <Grid container spacing={2} sx={{ position: "relative" }}>
-          <PipelineRail />
-          {steps.map((step, i) => (
-            <Grid item xs={12} sm={6} key={step.title} sx={{ position: "relative", zIndex: 1 }}>
-              <PipelineStepCard icon={step.icon} title={step.title} body={step.body} index={i} />
-            </Grid>
-          ))}
-        </Grid>
+        <Box>
+          <PipelineRail steps={steps} />
+          <Grid container spacing={2}>
+            {steps.map((step, i) => (
+              <Grid item xs={12} sm={6} md={3} key={step.title}>
+                <PipelineStepCard icon={step.icon} title={step.title} body={step.body} index={i} />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        <Box id="try-demo">
+          <TryDemoSection onTryDemo={loginWithDemo} />
+        </Box>
       </Container>
     </Box>
   );
