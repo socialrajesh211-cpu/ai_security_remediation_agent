@@ -19,39 +19,20 @@ export default defineConfig({
 
     rollupOptions: {
       output: {
+        // Split heavy, rarely-changing vendor code into its own chunk(s) so
+        // browsers cache it across app deploys instead of re-downloading it
+        // every time app code changes.
         manualChunks(id) {
-          // Only split dependencies from node_modules
-          if (!id.includes("node_modules")) {
-            return;
-          }
-
-          // React ecosystem
-          if (
-            id.includes("/react/") ||
-            id.includes("/react-dom/") ||
-            id.includes("react-router-dom")
-          ) {
+          if (!id.includes("node_modules")) return;
+          if (id.includes("react-router-dom") || /[\\/]react[\\/]/.test(id) || /[\\/]react-dom[\\/]/.test(id)) {
             return "vendor-react";
           }
-
-          // Material UI + Emotion
-          if (
-            id.includes("@mui") ||
-            id.includes("@emotion")
-          ) {
+          if (id.includes("@mui") || id.includes("@emotion")) {
             return "vendor-mui";
           }
-
-          // Redux
-          if (
-            id.includes("@reduxjs/toolkit") ||
-            id.includes("react-redux")
-          ) {
+          if (id.includes("@reduxjs/toolkit") || id.includes("react-redux")) {
             return "vendor-redux";
           }
-
-          // Everything else
-          return "vendor";
         },
       },
     },
